@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "229446439051-n7292hf62psf57ioovu8fqk1js0r986i.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.indra.math",
+            "certificate_hash": "032b52bc1af35b5e4951cc7223c07c6bbd55cfbc"
+          }
+        },
+        {
           "client_id": "229446439051-8hf2l4bis4n4cn645t83nbss2qgkodnq.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
