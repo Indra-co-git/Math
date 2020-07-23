@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "229446439051",
+    "firebase_url": "https://math-fe276.firebaseio.com",
+    "project_id": "math-fe276",
+    "storage_bucket": "math-fe276.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:229446439051:android:20c311657e4097689e048e",
+        "android_client_info": {
+          "package_name": "com.indra.math"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "229446439051-8hf2l4bis4n4cn645t83nbss2qgkodnq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.indra.math",
+            "certificate_hash": "d394e5ab38ae19b418705d71090d07834f25aa7e"
+          }
+        },
+        {
+          "client_id": "229446439051-0901j9u45n8h2b1u0bnmpq5gtca999q4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB0MbZP5VWWMQeuYrhEe_Y4FEzMNT3x8_g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "229446439051-0901j9u45n8h2b1u0bnmpq5gtca999q4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
