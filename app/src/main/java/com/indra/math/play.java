@@ -1,31 +1,30 @@
 package com.indra.math;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.SystemClock;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-
-import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.Random;
 
 public class play extends AppCompatActivity {
 
     Chronometer chronometer;
-    Button start,pause,reset,sub,b0,b1,b2,b3,b4,b5,b6,b7,b8,b9,backspace;
+    Button start,returned,skip,sub,b0,b1,b2,b3,b4,b5,b6,b7,b8,b9,backspace;
     private boolean running;
     private long offset;
     String answer_input;
 
-    TextView ta,tb,ts,fs,ed;
+    int solved_val,appered_val,accuracy_val;
+
+    TextView ta,tb,ed,solve,appere,accuracy;
     int a,b,c,s;
 //    EditText ed;
     @Override
@@ -37,24 +36,33 @@ public class play extends AppCompatActivity {
         chronometer.setBase(SystemClock.elapsedRealtime());
         //  chronometer.setCountDown(true);
         answer_input = "0";
+        solved_val=0;
+        appered_val=0;
+        accuracy_val=0;
 
 
         start = findViewById(R.id.start);
-        pause = findViewById(R.id.pause);
-        reset = findViewById(R.id.reset);
+//        pause = findViewById(R.id.pause);
+//        reset = findViewById(R.id.reset);
 
         ta = findViewById(R.id.a);
         tb = findViewById(R.id.b);
-        ts = findViewById(R.id.score);
-        fs = findViewById(R.id.finalscore);
+        solve=findViewById(R.id.q_solved);
+        appere=findViewById(R.id.q_appered);
+        accuracy=findViewById(R.id.accuracy);
+        ed = findViewById(R.id.res);
 
         sub = findViewById(R.id.submit);
+
+
+        returned=findViewById(R.id.returned);
+        skip=findViewById(R.id.skip);
 
 //        keyboard cord part
         {
         ed = findViewById(R.id.res);
 
-
+        sub = findViewById(R.id.submit);
         b0 = findViewById(R.id.button0);
         b1 = findViewById(R.id.button1);
         b2 = findViewById(R.id.button2);
@@ -211,35 +219,27 @@ public class play extends AppCompatActivity {
                     tb.setText(String.valueOf(int_randomb));
                     sub.setClickable(true);
                     ed.setText("");
-
+                    answer_input="0";
                 }
             }
         });
 
-        pause.setOnClickListener(new View.OnClickListener() {
+        //skip of question with no accuracy change
+        skip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(running)
                 {
-                    chronometer.stop();
-                    offset = SystemClock.elapsedRealtime() - chronometer.getBase();
-                    running = false;
-
-
+                    set_next_question();
                 }
             }
         });
-
-        reset.setOnClickListener(new View.OnClickListener() {
+//        return to mainactivity(intro)
+        returned.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!running)
-                {
-                    chronometer.setBase(SystemClock.elapsedRealtime());
-                    offset=0;
-                    chronometer.stop();
-                }
-
+                Intent intent = new Intent( play.this,MainActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -252,11 +252,8 @@ public class play extends AppCompatActivity {
                     running = false;
                     chronometer.stop();
 
-                    fs.setText(String.valueOf(s));
                     sub.setClickable(false);
                     s = 0;
-
-
                 }
             }
         });
@@ -264,34 +261,56 @@ public class play extends AppCompatActivity {
         sub.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (running) {
 
-                a = Integer.valueOf(ta.getText().toString());
-                b = Integer.valueOf(tb.getText().toString());
-                c = Integer.valueOf(ed.getText().toString().trim());
-                answer_input="0";
-                ed.setText(answer_input);
-                if(ed.getText().length()!=0 && c == (a+b) )
-                {
-                    s++;
-                    ts.setText(String.valueOf(s));
-                    ed.setText("");
-                    Random rand = new Random();
-                    int int_randoma = rand.nextInt(10);
-                    int int_randomb = rand.nextInt(10);
-                    ta.setText(String.valueOf(int_randoma));
-                    tb.setText(String.valueOf(int_randomb));
+                    if (ta.getText().toString().length() == 0 || tb.getText().toString().length() == 0 || ed.getText().toString().length() == 0) {
+                        Toast.makeText(play.this, "Submit is wrong", Toast.LENGTH_SHORT).show();
+                    } else {
+                        a = Integer.valueOf(ta.getText().toString());
+                        b = Integer.valueOf(tb.getText().toString());
+                        c = Integer.valueOf(ed.getText().toString().trim());
+                        answer_input = "0";
+                        ed.setText(answer_input);
+                        if (ed.getText().length() != 0 && c == (a + b)) {
+                            s++;
+                            ed.setText(answer_input);
+                            solved_val += 1;
+
+                            ed.setBackgroundColor(Color.parseColor("#94CAFBAB"));
+                        } else {
+                            ed.setText("");
+                            ed.setError("Wrong");
+                            ed.setBackgroundColor(Color.parseColor("#60F47C7C"));
+                        }
+                        appered_val++;
+
+                        set_scored_accuracy_appared();
+                        set_next_question();
+//                        solve.setText("some");
+                    }
                 }
-                else
-                {
-                    ed.setText("");
-                    ed.setError("Wrong");
-
-                }
-
             }
         });
 
 
+    }
+
+    private void set_scored_accuracy_appared() {
+
+        solve.setText(String.valueOf(solved_val));
+        appere.setText(String.valueOf(appered_val));
+        if(appered_val!=0)
+        accuracy.setText(String.valueOf((solved_val*100/appered_val)));
+        else
+            accuracy.setText("0");
+    }
+
+    private void set_next_question() {
+        Random rand = new Random();
+        int int_randoma = rand.nextInt(10);
+        int int_randomb = rand.nextInt(10);
+        ta.setText(String.valueOf(int_randoma));
+        tb.setText(String.valueOf(int_randomb));
     }
 
 

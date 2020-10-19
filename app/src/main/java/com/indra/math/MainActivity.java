@@ -28,7 +28,6 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Random;
 
@@ -76,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        b1 = findViewById(R.id.start);
+        b1 = findViewById(R.id.skip);
         b2 = findViewById(R.id.pause);
         b3 = findViewById(R.id.reset);
 
