@@ -32,7 +32,7 @@
             android:layout_height="wrap_content"
             android:text="start"
             android:layout_gravity="center"
-            android:id="@+id/start"
+            android:id="@+id/skip"
             />
         <Button
             android:layout_width="wrap_content"
