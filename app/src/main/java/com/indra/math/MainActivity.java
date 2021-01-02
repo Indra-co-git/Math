@@ -61,11 +61,11 @@ public class MainActivity extends AppCompatActivity {
     public void onStart() {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if(currentUser!=null)
-        {
-//            get_all_start_info_firebase();
-        }
+//        FirebaseUser currentUser = mAuth.getCurrentUser();
+//        if(currentUser!=null)
+//        {
+////            get_all_start_info_firebase();
+//        }
     }
 
     @Override
@@ -268,14 +268,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        mFirebaseAuth.addAuthStateListener(mAuthStateListener);
+//        mFirebaseAuth.addAuthStateListener(mAuthStateListener);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         if (mAuthStateListener != null) {
-            mFirebaseAuth.removeAuthStateListener(mAuthStateListener);
+//            mFirebaseAuth.removeAuthStateListener(mAuthStateListener);
         }
 
 
@@ -288,12 +288,13 @@ public class MainActivity extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
                 // Sign-in succeeded, set up the UI
                 Toast.makeText(this, "Signed in!", Toast.LENGTH_SHORT).show();
-                updateUI();
+//                updateUI();
 
             } else if (resultCode == RESULT_CANCELED) {
                 // Sign in was canceled by the user, finish the activity
                 Toast.makeText(this, "Sign in canceled", Toast.LENGTH_SHORT).show();
-                finish();
+//                updateUI();
+//                finish();
             }
         }
     }
