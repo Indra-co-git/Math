@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -41,11 +42,12 @@ public class MainActivity extends AppCompatActivity {
     public static final int RC_SIGN_IN = 1;
     private FirebaseAuth mFirebaseAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
-
-    private String mUsername;
+    private FirebaseAuth mAuth;
 
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mMessageDatabaseRefrence;
+    private String mUsername;
+
 
     private ValueEventListener eventListener;
 
@@ -53,6 +55,18 @@ public class MainActivity extends AppCompatActivity {
     Map<String,Integer> map;
     int a,b,c,s;
     EditText ed;
+
+    int flag=0;
+
+    public void onStart() {
+        super.onStart();
+        // Check if user is signed in (non-null) and update UI accordingly.
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if(currentUser!=null)
+        {
+//            get_all_start_info_firebase();
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
 
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mFirebaseAuth = FirebaseAuth.getInstance();
+        mAuth = FirebaseAuth.getInstance();
 
         mMessageDatabaseRefrence = mFirebaseDatabase.getReference().child("score");
 
@@ -101,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                Intent intent = new Intent(MainActivity.this, play.class);
+                Intent intent = new Intent(MainActivity.this, CountdownToGame.class);
                 startActivity(intent);
 //                if(!running)
 //                {
@@ -206,35 +221,11 @@ public class MainActivity extends AppCompatActivity {
                     String score = dataSnapshot.child(email).getValue(String.class);
 
                     map.put(email,Integer.valueOf(score));
-//
-//                    if(firebaseUser.getEmail().equals(email))
-//                    {
-//                        t1.setText(username);
-//                        t2.setText(email);
-//
-//                        FirebaseMessaging.getInstance().subscribeToTopic("/topics/"+username);
-//
-//                        // FirebaseMessaging.getInstance().subscribeToTopic("news");
-//                    }
-//
-//
-//                    allusers.add(new User("Name",username,email,token));
 
                 }
 
 
                 hs.setText(map.toString());
-               // UserAdapter adapter = new UserAdapter(getBaseContext(),allusers);
-
-              //  listView.setAdapter(adapter);
-
-
-
-
-
-
-
-
             }
 
             @Override
@@ -253,6 +244,11 @@ public class MainActivity extends AppCompatActivity {
                 if (user != null) {
                     // User is signed in
                     Toast.makeText(MainActivity.this, "You're now signed in", Toast.LENGTH_SHORT).show();
+                    set_get_info_firebase.update_all_info_firebase();
+
+                    Log.d("get_over_all_info_fire","------------------------Main cLASS IT ----------"+"-----");
+//                    Log.d("update_over_all_info","----------------------------------"+set_get_info_firebase.in_time_limit_detail_class.base_coin+set_get_info_firebase.in_time_limit_detail_class.level+"-----");
+
                 } else {
                     // User is signed out
                     startActivityForResult(
@@ -292,6 +288,8 @@ public class MainActivity extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
                 // Sign-in succeeded, set up the UI
                 Toast.makeText(this, "Signed in!", Toast.LENGTH_SHORT).show();
+                updateUI();
+
             } else if (resultCode == RESULT_CANCELED) {
                 // Sign in was canceled by the user, finish the activity
                 Toast.makeText(this, "Sign in canceled", Toast.LENGTH_SHORT).show();
@@ -317,6 +315,73 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void updateUI() {
+
+        final FirebaseUser user = mAuth.getCurrentUser();
+
+        if (user != null)
+        {                // sign in
+
+//            mUsername=user.getDisplayName();
+//            mUserid=user.getUid();
+            final String useremail=user.getEmail();
+
+            flag=0;
+
+            //to fetch all the users of firebase Auth app
+            DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
+
+            final DatabaseReference mMessageDatabaseRefrence = rootRef.child("users");
+
+            ValueEventListener eventListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+
+                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
+
+                        String email = ds.child("email").getValue(String.class);
+                        if(useremail.equals(email))
+                        {
+                            flag=1;
+                        }
+
+                    }
+                    if(flag==0)
+                    {
+
+                        String user_email=user.getEmail();
+                        String useremail_id = user_email.replace(".",","); // replaces all dots
+
+                        PersonItem person = new PersonItem(user.getDisplayName(),user.getEmail());
+
+//                        all game detail firebase initial input
+                        GameDetailFirebase in_time_limit_detail=new GameDetailFirebase(1,100,1);
+                        GameDetailFirebase over_all_detail=new GameDetailFirebase(1,100,1,10);
+                        mMessageDatabaseRefrence.child(useremail_id).child("profile").setValue(person);
+
+
+                        mMessageDatabaseRefrence.child(useremail_id).child("games").child("over_all").setValue(over_all_detail);
+                        mMessageDatabaseRefrence.child(useremail_id).child("games").child("in_time_limit").setValue(in_time_limit_detail);
+
+//                        for globel
+//                        DatabaseReference mMessageDatabaseRefrence_temp=FirebaseDatabase.getInstance().getReference().child("globle").child("user_detail_by_id");
+//
+//                        mMessageDatabaseRefrence_temp.child(useremail_id).setValue(person);
+
+                    }
+
+                }
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            };
+            mMessageDatabaseRefrence.addListenerForSingleValueEvent(eventListener);
+
+            Toast.makeText(MainActivity.this,   "Welcome " + user.getDisplayName() , Toast.LENGTH_SHORT).show();
         }
     }
 }
