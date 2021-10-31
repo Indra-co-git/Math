@@ -9,10 +9,50 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Ranking"></activity>
+<!--        <activity android:name=".GameFinishedResult"></activity>-->
 
-        <activity android:name=".play"></activity>
+<!--        <activity android:name=".CountdownToGame"-->
+<!--            >-->
+<!--        </activity>-->
 
+        <activity
+            android:name=".CountdownToGame"
+            android:label="CountdownToGame"
+            android:parentActivityName=".MainActivity">
+
+        <!-- Parent activity meta-data to support 4.0 and lower -->
+        <meta-data
+            android:name="android.support.PARENT_ACTIVITY"
+            android:value="com.indra.math.MainActivity"
+            />
+        </activity>
+
+        <activity
+            android:name=".play"
+            android:label="play"
+            android:parentActivityName=".MainActivity">
+
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.indra.math.MainActivity"
+                />
+        </activity>
+
+        <activity
+            android:name=".GameFinishedResult"
+            android:label="GameFinishedResult"
+            android:parentActivityName=".MainActivity">
+
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.indra.math.MainActivity"
+                />
+        </activity>
+
+
+        <activity android:name=".Ranking" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
