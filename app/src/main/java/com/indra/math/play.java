@@ -3,6 +3,7 @@ package com.indra.math;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.SystemClock;
 import android.view.View;
 import android.widget.Button;
@@ -10,30 +11,44 @@ import android.widget.Chronometer;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.Random;
 
+
+
 public class play extends AppCompatActivity {
 
-    Chronometer chronometer;
+//    Chronometer chronometer;
+    CountDownTimer cTimer = null;
     Button start,returned,skip,sub,b0,b1,b2,b3,b4,b5,b6,b7,b8,b9,backspace;
     private boolean running;
     private long offset;
     String answer_input;
 
+
+
+    private FirebaseDatabase mFirebaseDatabase;
+    private DatabaseReference mMessageDatabaseRefrence;
+    private FirebaseAuth mFirebaseAuth;
+
+
     int solved_val,appered_val,accuracy_val;
 
-    TextView ta,tb,ed,solve,appere,accuracy;
+    TextView ta,tb,ed,solve,appere,accuracy,countdown;
     int a,b,c,s;
 //    EditText ed;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play);
-        chronometer = findViewById(R.id.c1);
-        chronometer.setFormat("Time : %s");
-        chronometer.setBase(SystemClock.elapsedRealtime());
+//        chronometer = findViewById(R.id.c1);
+//        chronometer.setFormat("Time : %s");
+//        chronometer.setBase(SystemClock.elapsedRealtime());
         //  chronometer.setCountDown(true);
         answer_input = "0";
         solved_val=0;
@@ -41,7 +56,7 @@ public class play extends AppCompatActivity {
         accuracy_val=0;
 
 
-        start = findViewById(R.id.start);
+//        start = findViewById(R.id.start);
 //        pause = findViewById(R.id.pause);
 //        reset = findViewById(R.id.reset);
 
@@ -54,9 +69,10 @@ public class play extends AppCompatActivity {
 
         sub = findViewById(R.id.submit);
 
-
         returned=findViewById(R.id.returned);
         skip=findViewById(R.id.skip);
+        countdown=findViewById(R.id.countdown);
+
 
 //        keyboard cord part
         {
@@ -204,25 +220,27 @@ public class play extends AppCompatActivity {
         s=0;
         sub.setClickable(false);
 
-        start.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(!running)
-                {
-                    chronometer.setBase(SystemClock.elapsedRealtime()-offset);
-                    chronometer.start();
-                    running = true;
-                    Random rand = new Random();
-                    int int_randoma = rand.nextInt(10);
-                    int int_randomb = rand.nextInt(10);
-                    ta.setText(String.valueOf(int_randoma));
-                    tb.setText(String.valueOf(int_randomb));
-                    sub.setClickable(true);
-                    ed.setText("");
-                    answer_input="0";
-                }
-            }
-        });
+        start_game(30);
+
+//        start.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                if(!running)
+//                {
+//                    chronometer.setBase(SystemClock.elapsedRealtime()-offset);
+//                    chronometer.start();
+//                    running = true;
+//                    Random rand = new Random();
+//                    int int_randoma = rand.nextInt(10);
+//                    int int_randomb = rand.nextInt(10);
+//                    ta.setText(String.valueOf(int_randoma));
+//                    tb.setText(String.valueOf(int_randomb));
+//                    sub.setClickable(true);
+//                    ed.setText("");
+//                    answer_input="0";
+//                }
+//            }
+//        });
 
         //skip of question with no accuracy change
         skip.setOnClickListener(new View.OnClickListener() {
@@ -243,20 +261,20 @@ public class play extends AppCompatActivity {
             }
         });
 
-        chronometer.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
-            @Override
-            public void onChronometerTick(Chronometer chronometer) {
-                if(SystemClock.elapsedRealtime() - chronometer.getBase() >= 10000)
-                {
-                    chronometer.setBase(SystemClock.elapsedRealtime());
-                    running = false;
-                    chronometer.stop();
-
-                    sub.setClickable(false);
-                    s = 0;
-                }
-            }
-        });
+//        chronometer.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
+//            @Override
+//            public void onChronometerTick(Chronometer chronometer) {
+//                if(SystemClock.elapsedRealtime() - chronometer.getBase() >= 10000)
+//                {
+//                    chronometer.setBase(SystemClock.elapsedRealtime());
+//                    running = false;
+//                    chronometer.stop();
+//
+//                    sub.setClickable(false);
+//                    s = 0;
+//                }
+//            }
+//        });
 
         sub.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -275,7 +293,6 @@ public class play extends AppCompatActivity {
                             s++;
                             ed.setText(answer_input);
                             solved_val += 1;
-
                             ed.setBackgroundColor(Color.parseColor("#94CAFBAB"));
                         } else {
                             ed.setText("");
@@ -295,6 +312,20 @@ public class play extends AppCompatActivity {
 
     }
 
+    private void start_game(int input_time) {
+
+        startTimer(input_time);
+        running = true;
+        Random rand = new Random();
+        int int_randoma = rand.nextInt(10);
+        int int_randomb = rand.nextInt(10);
+        ta.setText(String.valueOf(int_randoma));
+        tb.setText(String.valueOf(int_randomb));
+        sub.setClickable(true);
+        ed.setText("");
+        answer_input="0";
+    }
+
     private void set_scored_accuracy_appared() {
 
         solve.setText(String.valueOf(solved_val));
@@ -311,6 +342,33 @@ public class play extends AppCompatActivity {
         int int_randomb = rand.nextInt(10);
         ta.setText(String.valueOf(int_randoma));
         tb.setText(String.valueOf(int_randomb));
+    }
+
+
+    //start timer function
+    void startTimer(int input_time) {
+
+        cTimer = new CountDownTimer(1000*input_time, 1000) {
+            public void onTick(long millisUntilFinished) {
+                countdown.setText("Time Left : " + millisUntilFinished / 1000 +" sec");
+            }
+            public void onFinish() {
+                sub.setClickable(false);
+                running=false;
+                cancelTimer();
+                Intent intent = new Intent(play.this, GameFinishedResult.class);
+//                intent.putExtra();
+                startActivity(intent);
+                finish();
+            }
+        };
+        cTimer.start();
+    }
+
+    //cancel timer
+    void cancelTimer() {
+        if(cTimer!=null)
+            cTimer.cancel();
     }
 
 
